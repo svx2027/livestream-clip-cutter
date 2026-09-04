@@ -1,0 +1,6 @@
+# Core pipeline
+mlx-whisper>=0.4.0
+yt-dlp>=2024.1.0
+
+# Not installable via pip -- required on PATH separately:
+#   ffmpeg   (window extraction, scripts/06_window_hi_check.sh)

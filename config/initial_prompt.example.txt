@@ -1,0 +1,11 @@
+# Copy this file to config/initial_prompt.txt and edit it for your source.
+#
+# Whisper accepts an "initial prompt" it uses to bias transcription toward
+# vocabulary it would otherwise mis-hear: product names, acronyms, proper
+# nouns, domain jargon. Keep it to a sentence or two of the terms that
+# actually appear in your audio -- it primes word choice, it does not need
+# to be exhaustive.
+#
+# Example, for a home-workout coach's Q&A livestream:
+This is a fitness Q&A livestream about strength training: progressive
+overload, warm-up sets, form cues, rest intervals, and injury prevention.

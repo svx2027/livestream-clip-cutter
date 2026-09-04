@@ -1,0 +1,64 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.python-version
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node (docgen tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Logs and temp
+*.log
+*.tmp
+tmp/
+temp/
+
+# OS / system
+Thumbs.db
+desktop.ini
+
+# repo-specific: no media, no run output
+*.m4a
+*.mp3
+*.mp4
+*.wav
+*.webm
+*.mkv
+*.mov
+source/
+transcripts/
+analysis/
+deliverables/

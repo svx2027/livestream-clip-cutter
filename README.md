@@ -35,11 +35,14 @@ comes back:
   the span should be flagged for the editor to trim.
 
 In practice, this has caught genuine code-switching that an English-forced
-transcript alone rendered as clean -- the second pass is not a formality. A
-deeper write-up of that finding, and of two dead-end approaches that don't
-work (a full-file forced-secondary pass hallucinates repetition loops; a
-naive multi-file transcription call silently collides every output into one
-file), is coming in a follow-up pass on this repo.
+transcript alone rendered as clean -- the second pass is not a formality.
+**[`docs/LANGUAGE_VERIFICATION.md`](docs/LANGUAGE_VERIFICATION.md) is the full
+write-up**: the decisive finding above in more depth, two approaches that look
+like a fix and aren't (a full-file forced-secondary pass on a fast model
+hallucinates repetition loops; a naive multi-file transcription call silently
+collides every output into one file), how to read a secondary-language
+transcript once you have one, and the smaller tooling gotchas that cost real
+time while this was being built.
 
 ## Pipeline
 
@@ -58,6 +61,9 @@ scripts/06_window_hi_check.sh  extracts each candidate window to its own WAV
 scripts/06b_window_hi_each.py  the decisive per-window secondary-language re-read
 scripts/05_reconcile_language.py   a coarser, full-transcript version of the same check
 ```
+
+See [`docs/LANGUAGE_VERIFICATION.md`](docs/LANGUAGE_VERIFICATION.md) for why
+`06`/`06b` are the check that matters and `05` is only a coarse supplement.
 
 ## Reproduce
 
@@ -113,7 +119,8 @@ stay a human or a closely-supervised model decision, not a heuristic.
 - **Bilingual English/Hindi is the case this was built and tuned for.** The
   language-reconciliation scripts assume a primary/secondary language pair
   and a Devanagari-script check; a different language pair needs a different
-  script-detection rule in `scripts/05_reconcile_language.py`.
+  script-detection rule in `scripts/05_reconcile_language.py` (see
+  `docs/LANGUAGE_VERIFICATION.md`'s last section).
 - **Suggested windows are starting points.** Even a window that passes every
   check here is worth an editor's ear -- word timestamps drift by roughly a
   second, and "make one complete point and flow naturally" is a judgment call

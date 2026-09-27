@@ -9,9 +9,6 @@ clean clip is caught."""
 import json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-QA = json.load(open(os.path.join(ROOT, "analysis", "clip-segments.json")))
-HI = json.load(open(os.path.join(ROOT, "transcripts", "hi", "audio.json")))
-hi_segs = HI.get("segments", [])
 
 DEV = re.compile(r"[ऀ-ॿ]")
 def dev_ratio(s):
@@ -24,25 +21,33 @@ def hms(t):
     t = int(t); h, m, s = t//3600, (t%3600)//60, t%60
     return f"{h}:{m:02d}:{s:02d}" if h else f"{m:02d}:{s:02d}"
 
-out = [f"LANGUAGE RECONCILIATION — secondary-language-pass view of each suggested window\n{'='*90}"]
-flagged = []
-for c in QA["clips"]:
-    a, b = c["suggested_in"], c["suggested_out"]
-    segs = [s for s in hi_segs if s["end"] > a and s["start"] < b]
-    txt = " ".join((s.get("text") or "").strip() for s in segs).strip()
-    r = dev_ratio(txt)
-    out.append(f"\n[{c['id']}]  {hms(a)}-{hms(b)}   Devanagari ratio={r:.2f}")
-    out.append(f"  SECONDARY: {txt[:400]}")
-    # A window that is genuinely primary-language will come back as mostly
-    # transliterated/Latin or broken secondary-language text; a high,
-    # *contiguous* script-match run is real secondary-language audio worth
-    # flagging.
-    if r >= 0.55:
-        flagged.append((c["id"], round(r, 2)))
+def main():
+    qa = json.load(open(os.path.join(ROOT, "analysis", "clip-segments.json")))
+    hi = json.load(open(os.path.join(ROOT, "transcripts", "hi", "audio.json")))
+    hi_segs = hi.get("segments", [])
 
-out.append(f"\n{'='*90}\nHIGH-SCRIPT-MATCH WINDOWS (review for hidden secondary-language audio): " +
-           (", ".join(f"{i}={r}" for i, r in flagged) if flagged else "none"))
-report = os.path.join(ROOT, "analysis", "language_reconciliation.txt")
-open(report, "w").write("\n".join(out))
-print("\n".join(out))
-print("\nwrote", report)
+    out = [f"LANGUAGE RECONCILIATION — secondary-language-pass view of each suggested window\n{'='*90}"]
+    flagged = []
+    for c in qa["clips"]:
+        a, b = c["suggested_in"], c["suggested_out"]
+        segs = [s for s in hi_segs if s["end"] > a and s["start"] < b]
+        txt = " ".join((s.get("text") or "").strip() for s in segs).strip()
+        r = dev_ratio(txt)
+        out.append(f"\n[{c['id']}]  {hms(a)}-{hms(b)}   Devanagari ratio={r:.2f}")
+        out.append(f"  SECONDARY: {txt[:400]}")
+        # A window that is genuinely primary-language will come back as mostly
+        # transliterated/Latin or broken secondary-language text; a high,
+        # *contiguous* script-match run is real secondary-language audio worth
+        # flagging.
+        if r >= 0.55:
+            flagged.append((c["id"], round(r, 2)))
+
+    out.append(f"\n{'='*90}\nHIGH-SCRIPT-MATCH WINDOWS (review for hidden secondary-language audio): " +
+               (", ".join(f"{i}={r}" for i, r in flagged) if flagged else "none"))
+    report = os.path.join(ROOT, "analysis", "language_reconciliation.txt")
+    open(report, "w").write("\n".join(out))
+    print("\n".join(out))
+    print("\nwrote", report)
+
+if __name__ == "__main__":
+    main()

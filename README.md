@@ -130,6 +130,28 @@ stay a human or a closely-supervised model decision, not a heuristic.
   into a shareable document for an editor is a natural next piece, not yet
   ported.
 
+## Tests
+
+![tests](https://github.com/svx2027/livestream-clip-cutter/actions/workflows/tests.yml/badge.svg)
+
+13 unit tests (`tests/test_pure_logic.py`) cover the pipeline's file-free,
+credential-free logic: the `hms()` timestamp formatters in scripts `03`/`04`/`05`,
+`04`'s word-span text extraction (`span_text`, including its exact-window,
+padding, no-match, and straddling-word-overlap-fallback behavior), and `05`'s
+Devanagari-script-ratio detector (`dev_ratio`, including the empty-string and
+digits-only edge cases). These are exactly the calculations that decide what
+text an editor sees for a clip and whether a window gets flagged for hidden
+secondary-language audio, so they're worth pinning even though the full
+pipeline can't run in CI.
+
+**Not covered, and can't be:** the actual audio download, transcription, and
+window-extraction steps (`01`, `02`, `06`, `06b`) need `yt-dlp`, `ffmpeg`, and
+`mlx-whisper` on real Apple Silicon hardware with Metal -- none of which exist
+on a GitHub Actions Linux runner. CI intentionally does not `pip install -r
+requirements.txt`: `mlx-whisper` has no Linux wheel, and even a mocked
+install can't actually run without `libmlx.so`. Run `python3 -m unittest
+discover -s tests -v` locally to reproduce the same 13/13.
+
 ## Requirements
 
 - Python 3.10+, a `.venv` (see Reproduce above)
